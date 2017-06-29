@@ -1,5 +1,9 @@
-div {
+div.chart {
   height: 100vh;
   margin: 0;
   padding: 0;
+}
+
+#daily-active-students {
+  display: none;
 }

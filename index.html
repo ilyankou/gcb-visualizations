@@ -1,15 +1,16 @@
-<div id="chart"></div>
-
-<br>
-<hr>
-<br>
-
-<div id="chart2"></div>
+<div class="chart" id="daily-active-students"></div>
+<div class="chart" id="attempted-completed-questions"></div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <link rel="stylesheet" type="text/css" href="style.css">
 
+<script src="course-data/StudentAnswersEntity.json.js"></script>
 
-<script src="StudentAnswersEntity.json.js"></script>
-<script src="StudentAnswersEntity.js"></script>
+<script src="scripts/helpers.js"></script>
+<!--
+<script src="scripts/dailyActiveStudents-highchart.js"></script>
+<script src="scripts/dailyActiveStudents.js"></script>
+-->
+<script src="scripts/attemptedCompletedQuestions-highchart.js"></script>
+<script src="scripts/attemptedCompletedQuestions.js"></script>
