@@ -13,20 +13,32 @@ function getAnswers(r) {
   return JSON.parse(r.answers_dict).answers;
 }
 
-
 /**
  * Calculates the number of days between start and end dates
  */
 function daysBetween(start, end) {
-  return Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+  return Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
 }
 
 
 /**
- * Returns a Date object from a string of kind: '2017-06-26T17:03:01.104330Z'
- * Such date string is stored in recorded_on
+ * Function to load JSON
  */
-function strToDate(s) {
-  var d = s.split('T')[0].split('-');
-  return new Date(d[0], d[1] - 1, d[2]);
+function loadJSON(path, success, error)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                if (success)
+                    success(JSON.parse(xhr.responseText));
+            } else {
+                if (error)
+                    error(xhr);
+            }
+        }
+    };
+    xhr.open("GET", path, true);
+    xhr.send();
 }

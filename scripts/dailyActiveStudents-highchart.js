@@ -16,7 +16,8 @@ function plotDailyActiveStudents(data) {
     yAxis: {
       title: {
         text: 'Number of Active Students'
-      }
+      },
+      allowDecimals: false,
     },
 
     legend: {
@@ -25,7 +26,7 @@ function plotDailyActiveStudents(data) {
 
     plotOptions: {
       series: {
-        pointStart: 1,
+        pointStart: 1
       }
     },
 
