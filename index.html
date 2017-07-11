@@ -1,21 +1,63 @@
-<div class="chart" id="daily-active-students"></div>
-<div class="chart" id="attempted-completed-questions"></div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Google Course Builder Analytics</title>
 
-<script   src="https://code.jquery.com/jquery-3.2.1.min.js"   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="   crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<link rel="stylesheet" type="text/css" href="style.css">
+    <script src="scripts/helpers.js"></script>
+    <script src="scripts/dailyActiveStudents-highchart.js"></script>
+    <script src="scripts/dailyActiveStudents.js"></script>
+    <script src="scripts/attemptedCompletedQuestions-highchart.js"></script>
+    <script src="scripts/attemptedCompletedQuestions.js"></script>
 
-<script src="course-data/StudentAnswersEntity.json.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+      integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+      crossorigin="anonymous">
 
-<script src="scripts/helpers.js"></script>
+  </head>
+  <body>
 
-<script src="scripts/dailyActiveStudents-highchart.js"></script>
-<script src="scripts/dailyActiveStudents.js"></script>
+    <form class="pure-form">
+      <fieldset>
 
+        <label for="chart-type">Show </label>
+        <select id="chart-type">
+          <option>Daily Active Students</option>
+          <option>Attempted and Completed Questions</option>
+        </select>
 
-<!--
-<script src="scripts/attemptedCompletedQuestions-highchart.js"></script>
-<script src="scripts/attemptedCompletedQuestions.js"></script>
--->
+        <div id="additional-fields">
+          <div id="dates">
+            <label for="start-date">from </label>
+            <input type="date" id="start-date" placeholder="2017-06-17">
+            <label for="end-date"> to </label>
+            <input type="date" id="end-date" placeholder="2017-06-25">
+          </div>
+
+          <div id="unit-lesson-div" class="hidden">
+            <label for="unit-id">Unit ID </label>
+            <input type="number" id="unit-id" placeholder="1">
+            <label for="lesson-id" style="margin-left: 15px;"> Lesson ID </label>
+            <input type="number" id="lesson-id" placeholder="1">
+            <br><span><i>*</i> leave blank to get questions from all units or lessons</span>
+          </div>
+        </div>
+
+        <br>
+        <button type="submit" class="pure-button pure-button-primary">Draw chart!</button>
+
+      </fieldset>
+    </form>
+
+    <div id="chart"></div>
+
+  </body>
+</html>

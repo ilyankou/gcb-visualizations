@@ -1,58 +1,34 @@
-$(document).ready(function() {
+var startDate = new Date(2017, 5, 1);
+var endDate = new Date(2017, 5, 30);
 
+function dailyActiveStudents(startDate, endDate) {
 
-$.getJSON('course-data/EventEntity.json', function(json) {
-  //loadJSON('course-data/EventEntity.json', function(json) {
-    var eventRows = json.rows;
+  $.getJSON('course-data/EventEntity.json', function(json) {
 
-    var startDate = new Date(2017, 5, 20);
-    var endDate = new Date(2017, 5, 30);
+      var courseDurationInDays = daysBetween(startDate, endDate);
+      var dailyActiveStudents = Array(courseDurationInDays).fill(0);
 
-    var courseDurationInDays = daysBetween(startDate, endDate);
+      for (i in json.rows) {
+        var userId = json.rows[i].user_id;
+        var eventDate = new Date(json.rows[i].recorded_on);
+        var d = daysBetween(startDate, eventDate) - 1;
 
-    /* This counts the number of active students for each day of the course */
-    /* THIS USES STUDENT ANSWER ENTITY DATASET
-    // We assume that all students (rows.length) were active on all days
-    dailyActiveStudents = Array(courseDurationInDays).fill(rows.length);
+        if (d < 0 || d > courseDurationInDays) continue;
 
-    for (i in rows) {
-      lastActiveDay = daysBetween(startDate, new Date(getRecordedOn(rows[i])));
+        if (!dailyActiveStudents[d]) {
+          dailyActiveStudents[d] = {};
+        }
 
-      // Subtract 1 from all inactive days for that user
-      for (j = lastActiveDay; j < courseDurationInDays; j++) {
-        dailyActiveStudents[j]--;
-      }
-    }
-    */
-
-    dailyActiveStudents = Array(courseDurationInDays).fill(0);
-
-    for (i in eventRows) {
-      var userId = eventRows[i].user_id;
-      var eventDate = new Date(eventRows[i].recorded_on);
-      var d = daysBetween(startDate, eventDate) - 1;
-
-      if (d < 0 || d > courseDurationInDays) continue;
-
-      if (!dailyActiveStudents[d]) {
-        dailyActiveStudents[d] = {};
+        if (!dailyActiveStudents[d][userId]) {
+          dailyActiveStudents[d][userId] = 1;
+        } else {
+          dailyActiveStudents[d][userId] += 1;
+        }
       }
 
-      if (!dailyActiveStudents[d][userId]) {
-        dailyActiveStudents[d][userId] = 1;
-      } else {
-        dailyActiveStudents[d][userId] += 1;
-      }
-    }
+      var data = dailyActiveStudents.map(function(o) { return Object.keys(o).length });
 
-    data = [];
-    for (i = 0; i < courseDurationInDays; i++) {
-      data.push(dailyActiveStudents == 0 ? 0 : Object.keys(dailyActiveStudents[i]).length);
-    }
+      plotDailyActiveStudents(startDate, data);
+  });
 
-
-    plotDailyActiveStudents(data);
-});
-  //}, function(error) { console.error(error); });
-
-});
+}

@@ -1,15 +1,17 @@
-function plotDailyActiveStudents(data) {
+function plotDailyActiveStudents(startDate, data) {
 
-  Highcharts.chart('daily-active-students', {
-
+  Highcharts.chart('chart', {
+    
     title: {
       text: 'Daily Active Students'
     },
 
     xAxis: {
       allowDecimals: false,
-      title: {
-        text: 'Course Duration, Days'
+      labels: {
+        formatter: function() {
+          return moment(startDate).add(this.value, 'days').format('MMM Do');
+        }
       }
     },
 
@@ -20,13 +22,21 @@ function plotDailyActiveStudents(data) {
       allowDecimals: false,
     },
 
+    tooltip: {
+      formatter: function() {
+        var date = moment(startDate).add(this.x, 'days').format('dddd, MMMM Do, YYYY');
+        var val = (this.y < 1 ? 'No' : this.y) + ' active student' + (this.y == 1 ? '' : 's');
+        return date + '<br>' + val;
+      }
+    },
+
     legend: {
       enabled: false,
     },
 
     plotOptions: {
       series: {
-        pointStart: 1
+        pointStart: 0
       }
     },
 

@@ -1,9 +1,38 @@
-div.chart {
-  height: 100vh;
-  margin: 0;
+#chart {
+  height: 95vh;
+  width: 96vw;
+  margin: auto auto;
   padding: 0;
+  display: none;
 }
 
-#attempted-completed-questions {
+form {
+  width: 50vw;
+  min-width: 500px;
+  margin: auto;
+  padding: 25px;
+  margin-top: calc(50vh - 150px);
+  background: #eee;
+}
+
+#additional-fields div {
+  margin: 15px 0;
+  display: block;
+}
+
+.hidden {
   display: none;
+}
+
+input[type="number"] {
+  width: 80px;
+}
+
+#additional-fields span {
+  font-size: 0.7em;
+}
+
+#additional-fields span i {
+  color: red;
+  font-weight: bold;
 }

@@ -1,6 +1,6 @@
 function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
 
-  Highcharts.chart('attempted-completed-questions', {
+  Highcharts.chart('chart', {
     chart: {
       type: 'column'
     },
