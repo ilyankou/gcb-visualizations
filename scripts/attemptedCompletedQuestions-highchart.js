@@ -47,8 +47,10 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
     },
 
     tooltip: {
-      headerFormat: 'Question ID: <b>{point.x}</b><br/>',
-      pointFormat: 'Unit ID: {point.unit}, Lesson ID: {point.lesson}<br> \
+      headerFormat: '',
+      pointFormat: '<b>{point.text}</b><br>\
+                    Question ID: <b>{point.x}</b><br> \
+                    Unit ID: {point.unit}, Lesson ID: {point.lesson}<br> \
                     Attempted <b>{point.attemptedTimes}</b> times by <b>{point.attemptedStudents}</b> students<br> \
                     Completed by <b>{point.completed}</b> students ({point.completedStudentsRate}%)<br> \
                     Average <b>{point.av}</b> attempts to answer'

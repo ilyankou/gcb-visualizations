@@ -80,48 +80,60 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       completedStudentsRate.push(Math.floor((q.totalStudentsCompleted / q.totalStudentsAttempted) * 100));
       lessons.push(q.lesson_id);
       units.push(q.unit_id);
-
-      //success_rates.push(100 - Math.round((completes / attempts) * 100));
     }
 
-    data1 = [];
-    data2 = [];
-    data3 = [];
 
-    for (i in questionIds) {
-      data1.push({
-        y: completed[i],
-        completed: completed[i],
-        attemptedTimes: attemptedTimes[i],
-        attemptedStudents: attemptedStudents[i],
-        completedStudentsRate: completedStudentsRate[i],
-        av: (attemptedTimes[i] / completed[i]).toFixed(2),
-        lesson: lessons[i],
-        unit: units[i]
-      });
-      data2.push({
-        y: failed[i],
-        completed: completed[i],
-        attemptedTimes: attemptedTimes[i],
-        attemptedStudents: attemptedStudents[i],
-        completedStudentsRate: completedStudentsRate[i],
-        av: (attemptedTimes[i] / completed[i]).toFixed(2),
-        lesson: lessons[i],
-        unit: units[i]
-      });
-      data3.push({
-        y: unsuccessful[i],
-        completed: completed[i],
-        attemptedTimes: attemptedTimes[i],
-        attemptedStudents: attemptedStudents[i],
-        completedStudentsRate: completedStudentsRate[i],
-        av: (attemptedTimes[i] / completed[i]).toFixed(2),
-        lesson: lessons[i],
-        unit: units[i]
-      });
-    }
+    $.getJSON('course-data/QuestionEntity.json', function(json) {
+      questionText = {}
+      for (i in json.rows) {
+        var id = json.rows[i]['key.id'];
+        questionText[id] = JSON.parse(json.rows[i].data).description;
+      }
 
-    plotAttemptedCompletedQuestions(questionIds, data1, data2, data3);
+
+      data1 = [];
+      data2 = [];
+      data3 = [];
+
+      for (i in questionIds) {
+        data1.push({
+          y: completed[i],
+          text: questionText[questionIds[i]],
+          completed: completed[i],
+          attemptedTimes: attemptedTimes[i],
+          attemptedStudents: attemptedStudents[i],
+          completedStudentsRate: completedStudentsRate[i],
+          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          lesson: lessons[i],
+          unit: units[i]
+        });
+        data2.push({
+          y: failed[i],
+          completed: completed[i],
+          text: questionText[questionIds[i]],
+          attemptedTimes: attemptedTimes[i],
+          attemptedStudents: attemptedStudents[i],
+          completedStudentsRate: completedStudentsRate[i],
+          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          lesson: lessons[i],
+          unit: units[i]
+        });
+        data3.push({
+          y: unsuccessful[i],
+          completed: completed[i],
+          text: questionText[questionIds[i]],
+          attemptedTimes: attemptedTimes[i],
+          attemptedStudents: attemptedStudents[i],
+          completedStudentsRate: completedStudentsRate[i],
+          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          lesson: lessons[i],
+          unit: units[i]
+        });
+      }
+
+      plotAttemptedCompletedQuestions(questionIds, data1, data2, data3);
+
+    });
 
   });
 
