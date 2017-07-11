@@ -57,6 +57,15 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
     },
 
     plotOptions: {
+      series: {
+        cursor: 'pointer',
+        events: {
+          click: function() {
+            var id = event.point.category;
+            window.open('https://mobilecsp-2017.appspot.com/mobilecsp/teacher?action=question_preview&quid=' + id);
+          }
+        }
+      },
       column: {
         stacking: 'normal',
         dataLabels: {

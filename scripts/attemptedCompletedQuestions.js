@@ -67,8 +67,6 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
     lessons = [];
     units = [];
 
-      /* !!!!! CLEAN UP ALL THIS MESS BELOW */
-
     for (i in questionIds) {
       var q = questionStats[questionIds[i]];
 
