@@ -65,6 +65,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       return;
     }
 
+    refreshWhenBack();
+
     attemptedTimes = [];
     attemptedStudents = [];
     completed = [];

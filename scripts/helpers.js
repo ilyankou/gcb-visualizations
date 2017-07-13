@@ -93,7 +93,6 @@ $(document).ready(function() {
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
       attemptedCompletedQuestions(unit, lesson);
-      refreshWhenBack();
     }
     else if (chartType === 'Daily Active Students') {
       var startDate = new Date($('#start-date').val());
