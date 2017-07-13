@@ -59,7 +59,7 @@ $(document).ready(function() {
     if (unitId != '-1') {
       var lessonIds = Object.keys(syllabus[unitId]['lessons']).sort(
         function(a, b) {
-          return parseFloat(syllabus[unitId]['lessons'][a].split(' ')[0]) > parseFloat(syllabus[unitId]['lessons'][b].split(' ')[0]) ? 1 : -1;
+          return parseInt(syllabus[unitId]['lessons'][a].split(' ')[0].split('.')[1]) > parseInt(syllabus[unitId]['lessons'][b].split(' ')[0].split('.')[1]) ? 1 : -1;
         }
       );
 
