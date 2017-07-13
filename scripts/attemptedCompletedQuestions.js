@@ -139,6 +139,16 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         });
       }
 
+      function sortByAv(a, b) {
+        return (a.av < b.av) ? 1 : -1;
+      }
+
+      if ($('#sort-by-difficulty').is(':checked')) {
+        data1.sort(sortByAv);
+        data2.sort(sortByAv);
+        data3.sort(sortByAv);
+      }
+
       plotAttemptedCompletedQuestions(questionIds, data1, data2, data3);
 
     });
