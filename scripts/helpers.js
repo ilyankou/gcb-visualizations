@@ -1,3 +1,15 @@
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) {
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
 /**
  * A bunch of getters to access student information from a database row
  */
@@ -21,6 +33,34 @@ function daysBetween(start, end) {
 }
 
 $(document).ready(function() {
+  // Get Unit IDs from syllabus object, sorted
+  var unitIds = Object.keys(syllabus).sort(
+    function(a, b) {
+      return parseInt(syllabus[a]['title'].split(' ')[1]) > parseInt(syllabus[b]['title'].split(' ')[1]) ? 1 : -1;
+  });
+
+  unitIds.forEach(function(unit) {
+    $('#unit-id').append('<option value={0}>{1}</option>'.format(unit, syllabus[unit].title));
+  });
+
+  $('#unit-id').change(function() {
+    $('#lesson-id option:not([value="-1"])').each(function() {
+      $(this).remove();
+    });
+
+    var unitId = $(this).val();
+    if (unitId != '-1') {
+      var lessonIds = Object.keys(syllabus[unitId]['lessons']).sort(
+        function(a, b) {
+          return parseFloat(syllabus[unitId]['lessons'][a].split(' ')[0]) > parseFloat(syllabus[unitId]['lessons'][b].split(' ')[0]) ? 1 : -1;
+        }
+      );
+
+      lessonIds.forEach(function(lesson) {
+        $('#lesson-id').append('<option value={0}>{1}</option>'.format(lesson, syllabus[unitId]['lessons'][lesson]));
+      });
+    }
+  });
 
   $('#chart-type').change(function() {
     $('#additional-fields div').addClass('hidden');
@@ -42,11 +82,6 @@ $(document).ready(function() {
     if (chartType === 'Attempted and Completed Questions') {
       var unit = parseInt($('#unit-id').val());
       var lesson = parseInt($('#lesson-id').val());
-
-      if (unit < 0 || lesson < 0) {
-        alert('Unit and Lesson IDs must be positive integers!');
-        return;
-      }
 
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
@@ -72,6 +107,5 @@ $(document).ready(function() {
     }
 
   });
-
 
 });

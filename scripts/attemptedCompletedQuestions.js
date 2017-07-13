@@ -10,7 +10,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       for (j in units) {  // Iterate through units
         var u = units[j];
 
-        if (!isNaN(wantedUnit) && wantedUnit != u) {
+        if (wantedUnit != u && wantedUnit != -1) {
           continue;
         }
 
@@ -19,7 +19,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         for (k in lessons) {  // Iterate through lessons
           var l = lessons[k];
 
-          if (!isNaN(wantedLesson) && wantedLesson != l) {
+          if (wantedLesson != l && wantedLesson != -1) {
             continue;
           }
 
@@ -56,8 +56,15 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       }
     }
 
-
     questionIds = Object.keys(questionStats);
+
+    if (questionIds.length == 0) {
+      alert('Nothing to display!');
+      $('#chart').css('display', 'none');
+      $('form').css('display', 'block');
+      return;
+    }
+
     attemptedTimes = [];
     attemptedStudents = [];
     completed = [];
@@ -96,36 +103,39 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       for (i in questionIds) {
         data1.push({
           y: completed[i],
+          id: questionIds[i],
           text: questionText[questionIds[i]],
           completed: completed[i],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: (attemptedTimes[i] / completed[i]).toFixed(2),
-          lesson: lessons[i],
-          unit: units[i]
+          lesson: syllabus[units[i]].lessons[lessons[i]],
+          unit: syllabus[units[i]].title,
         });
         data2.push({
           y: failed[i],
+          id: questionIds[i],
           completed: completed[i],
           text: questionText[questionIds[i]],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: (attemptedTimes[i] / completed[i]).toFixed(2),
-          lesson: lessons[i],
-          unit: units[i]
+          lesson: syllabus[units[i]].lessons[lessons[i]],
+          unit: syllabus[units[i]].title,
         });
         data3.push({
           y: unsuccessful[i],
+          id: questionIds[i],
           completed: completed[i],
           text: questionText[questionIds[i]],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: (attemptedTimes[i] / completed[i]).toFixed(2),
-          lesson: lessons[i],
-          unit: units[i]
+          lesson: syllabus[units[i]].lessons[lessons[i]],
+          unit: syllabus[units[i]].title,
         });
       }
 

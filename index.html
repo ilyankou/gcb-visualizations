@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
     <script src="scripts/helpers.js"></script>
+    <script src="./syllabus.js"></script>
     <script src="scripts/dailyActiveStudents-highchart.js"></script>
     <script src="scripts/dailyActiveStudents.js"></script>
     <script src="scripts/attemptedCompletedQuestions-highchart.js"></script>
@@ -43,11 +44,14 @@
           </div>
 
           <div id="unit-lesson-div" class="hidden">
-            <label for="unit-id">Unit ID </label>
-            <input type="number" id="unit-id" placeholder="1">
-            <label for="lesson-id" style="margin-left: 15px;"> Lesson ID </label>
-            <input type="number" id="lesson-id" placeholder="1">
-            <br><span><i>*</i> leave blank to get questions from all units or lessons</span>
+            <label for="unit-id">for </label>
+            <select id="unit-id">
+              <option value="-1">all units</option>
+            </select>
+            <label for="lesson-id"> and</label>
+            <select id="lesson-id">
+              <option value="-1">all lessons</option>
+            </select>
           </div>
         </div>
 
