@@ -50,6 +50,7 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
       headerFormat: '',
       pointFormat: '<b>{point.text}</b><br>\
                     from <i>{point.lesson}</i><br> \
+                    Type: {point.type}<br> \
                     Attempted <b>{point.attemptedTimes}</b> times by <b>{point.attemptedStudents}</b> students<br> \
                     Completed by <b>{point.completed}</b> students ({point.completedStudentsRate}%)<br> \
                     Average <b>{point.av}</b> attempts to answer<br> \

@@ -42,3 +42,11 @@ input[type="number"] {
   color: red;
   font-weight: bold;
 }
+
+#additional-fields p label:not(:first-child) {
+  margin-left: 10px;
+}
+
+p {
+  margin: 10px 0;
+}

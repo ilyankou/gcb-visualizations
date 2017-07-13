@@ -3,6 +3,12 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
   $.getJSON('course-data/StudentAnswersEntity.json', function(json) {
     questionStats = {};
 
+    var isWantedType = {
+      'McQuestion': document.getElementById('show-mc').checked,
+      'SaQuestion': document.getElementById('show-sa').checked,
+      'Quizly': document.getElementById('show-quizly').checked,
+    }
+
     for (i in json.rows) {
       var answ = getAnswers(json.rows[i]);
       var units = Object.keys(answ);
@@ -30,8 +36,18 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
             var qKey = questions[m];
             var o = answ[u][l][qKey];
             var qId = o.question_id;
+            var qType = o.question_type;
 
-            if (!qId) continue;   // Ignore questions with no question_id
+            if (!qId && (qType === 'SaQuestion')) {
+              // Then must be Quizly. Quizly does not currently have quid, so use
+              // question key instead
+              qId = qKey;
+              qType = 'Quizly';
+            } else if (!qId) {
+              continue;
+            }
+
+            if (!isWantedType[qType]) continue;
 
             var qScore = o.score;
             var qAttempts = o.attempts;
@@ -42,6 +58,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
               questionStats[qId] = {
                 unit_id: o.unit_id,
                 lesson_id: o.lesson_id,
+                question_type: qType,
                 totalTimesAttempted: 0,
                 totalStudentsAttempted: 0,
                 totalStudentsCompleted: 0
@@ -75,6 +92,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
     completedStudentsRate = [];
     lessons = [];
     units = [];
+    types = [];
 
     for (i in questionIds) {
       var q = questionStats[questionIds[i]];
@@ -87,6 +105,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       completedStudentsRate.push(Math.floor((q.totalStudentsCompleted / q.totalStudentsAttempted) * 100));
       lessons.push(q.lesson_id);
       units.push(q.unit_id);
+      types.push(q.question_type);
     }
 
 
@@ -103,41 +122,47 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       data3 = [];
 
       for (i in questionIds) {
+        // to avoid infinity:
+        var av = completed[i] == 0 ? 0 : (attemptedTimes[i] / completed[i]).toFixed(2);
+
         data1.push({
           y: completed[i],
           id: questionIds[i],
-          text: questionText[questionIds[i]],
+          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
           completed: completed[i],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
-          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          av: av,
           lesson: syllabus[units[i]].lessons[lessons[i]],
           unit: syllabus[units[i]].title,
+          type: types[i]
         });
         data2.push({
           y: failed[i],
           id: questionIds[i],
           completed: completed[i],
-          text: questionText[questionIds[i]],
+          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
-          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          av: av,
           lesson: syllabus[units[i]].lessons[lessons[i]],
           unit: syllabus[units[i]].title,
+          type: types[i]
         });
         data3.push({
           y: unsuccessful[i],
           id: questionIds[i],
           completed: completed[i],
-          text: questionText[questionIds[i]],
+          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
-          av: (attemptedTimes[i] / completed[i]).toFixed(2),
+          av: av,
           lesson: syllabus[units[i]].lessons[lessons[i]],
           unit: syllabus[units[i]].title,
+          type: types[i]
         });
       }
 
