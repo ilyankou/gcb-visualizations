@@ -18,13 +18,10 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
 
     yAxis: {
       min: 0,
-
+      reversedStacks: false,
       title: {
         text: ''
       },
-
-      reversedStacks: false,
-
       stackLabels: {
         enabled: false,
           style: {
@@ -47,14 +44,20 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
     },
 
     tooltip: {
-      headerFormat: '',
-      pointFormat: '<b>{point.text}</b><br>\
-                    from <i>{point.lesson}</i><br> \
-                    Type: {point.type}<br> \
-                    Attempted <b>{point.attemptedTimes}</b> times by <b>{point.attemptedStudents}</b> students<br> \
-                    Completed by <b>{point.completed}</b> students ({point.completedStudentsRate}%)<br> \
-                    Average <b>{point.av}</b> attempts to answer<br> \
-                    Question ID <b>{point.id}</b>'
+      formatter: function() {
+        var p = this.point;
+        var html = '<b>{0}</b> <br> \
+                    from <i>{1}</i> <br> \
+                    Type: {2} <br> \
+                    Attempted <b>{3}</b> times by <b>{4}</b> students<br> \
+                    Completed by <b>{5}</b> students ({6}%)<br> \
+                    Average <b>{7}</b> attempts to answer<br> \
+                    Question ID <b>{8}</b>'.format(
+                      p.text, p.lesson, p.type, p.attemptedTimes, p.attemptedStudents,
+                      p.completed, p.completedStudentsRate, p.av, p.id
+                    );
+        return html;
+      }
     },
 
     plotOptions: {
@@ -62,8 +65,17 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
         cursor: 'pointer',
         events: {
           click: function() {
+            var type = event.point.type;
             var id = event.point.id;
-            window.open('https://mobilecsp-2017.appspot.com/mobilecsp/teacher?action=question_preview&quid=' + id, 'Question Preview', 'height=400,width=700');
+            var url = 'https://mobilecsp-2017.appspot.com/mobilecsp/';
+
+            if (type === 'Quizly') {
+              url += 'assets/lib/quizly/gcb-index.html?backpack=hidden&selector=hidden&quizname=';
+            } else {
+              url += 'teacher?action=question_preview&quid=';
+            }
+
+            window.open(url + id, 'Question Preview', 'height=400,width=700');
           }
         }
       },

@@ -116,19 +116,29 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         questionText[id] = JSON.parse(json.rows[i].data).description;
       }
 
-
       data1 = [];
       data2 = [];
       data3 = [];
 
       for (i in questionIds) {
+        var id = questionIds[i];
         // to avoid infinity:
         var av = completed[i] == 0 ? 0 : (attemptedTimes[i] / completed[i]).toFixed(2);
+        var text = questionText[questionIds[i]];
+
+        if (types[i] === 'Quizly') {
+          if (quizly_desc[id]) {
+            text = quizly_desc[id].desc;
+            id = quizly_desc[id].name;
+          } else {
+            text = 'Quizly';
+          }
+        }
 
         data1.push({
           y: completed[i],
-          id: questionIds[i],
-          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
+          id: id,
+          text: text,
           completed: completed[i],
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
@@ -140,9 +150,9 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         });
         data2.push({
           y: failed[i],
-          id: questionIds[i],
+          id: id,
           completed: completed[i],
-          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
+          text: text,
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
@@ -153,9 +163,9 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         });
         data3.push({
           y: unsuccessful[i],
-          id: questionIds[i],
+          id: id,
           completed: completed[i],
-          text: types[i] === 'Quizly' ? 'Quizly' : questionText[questionIds[i]],
+          text: text,
           attemptedTimes: attemptedTimes[i],
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
