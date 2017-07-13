@@ -1,3 +1,10 @@
+function refreshWhenBack() {
+  window.location += '#'
+  window.onpopstate = function() {
+    location.reload()
+  }
+}
+
 if (!String.prototype.format) {
   String.prototype.format = function() {
     var args = arguments;
@@ -86,6 +93,7 @@ $(document).ready(function() {
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
       attemptedCompletedQuestions(unit, lesson);
+      refreshWhenBack();
     }
     else if (chartType === 'Daily Active Students') {
       var startDate = new Date($('#start-date').val());
@@ -104,6 +112,7 @@ $(document).ready(function() {
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
       dailyActiveStudents(startDate, endDate);
+      refreshWhenBack();
     }
 
   });
