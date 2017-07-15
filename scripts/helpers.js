@@ -1,7 +1,7 @@
 function refreshWhenBack() {
   window.location += '#'
   window.onpopstate = function() {
-    location.reload()
+    location.reload();
   }
 }
 

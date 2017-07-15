@@ -1,21 +1,25 @@
 function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
 
-  $.getJSON('course-data/StudentAnswersEntity.json', function(json) {
+  $.getJSON(dataFolder + 'StudentAnswersEntity.json', function(json) {
     questionStats = {};
 
-    var isWantedType = {
+    var questionTypeWanted = {
       'McQuestion': document.getElementById('show-mc').checked,
       'SaQuestion': document.getElementById('show-sa').checked,
       'Quizly': document.getElementById('show-quizly').checked,
     }
 
     for (i in json.rows) {
-      var answ = getAnswers(json.rows[i]);
+      var dict = JSON.parse(json.rows[i].answers_dict);
+      if (!dict) continue;
+
+      var answ = dict.answers;
       var units = Object.keys(answ);
 
       for (j in units) {  // Iterate through units
         var u = units[j];
 
+        // Do not continue if not wanted unit
         if (wantedUnit != u && wantedUnit != -1) {
           continue;
         }
@@ -25,6 +29,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
         for (k in lessons) {  // Iterate through lessons
           var l = lessons[k];
 
+          // Do not continue if does not belong to wanted lesson
           if (wantedLesson != l && wantedLesson != -1) {
             continue;
           }
@@ -44,30 +49,31 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
               qId = qKey;
               qType = 'Quizly';
             } else if (!qId) {
+              // Do not continue if quid is missing and not a Quizly exercise
               continue;
             }
 
-            if (!isWantedType[qType]) continue;
+            // Check if question type is what user wants
+            if (!questionTypeWanted[qType]) continue;
 
             var qScore = o.score;
             var qAttempts = o.attempts;
 
-            // If question has not been processed previously,
-            // create a new JSON object and add it to the set
+            // If we haven't encountered this question yet, create a new object
             if (!questionStats[qId]) {
               questionStats[qId] = {
-                unit_id: o.unit_id,
-                lesson_id: o.lesson_id,
-                question_type: qType,
-                totalTimesAttempted: 0,
-                totalStudentsAttempted: 0,
-                totalStudentsCompleted: 0
+                unitId: o.unit_id,
+                lessonId: o.lesson_id,
+                questionType: qType,
+                attemptedTimes: 0,
+                attemptedStudents: 0,
+                completed: 0
               };
             }
 
-            questionStats[qId].totalTimesAttempted += qAttempts;
-            questionStats[qId].totalStudentsAttempted += 1;
-            questionStats[qId].totalStudentsCompleted += (qScore == 1) ? 1 : 0;
+            questionStats[qId].attemptedTimes += qAttempts;
+            questionStats[qId].attemptedStudents += 1;
+            questionStats[qId].completed += (qScore == 1) ? 1 : 0;
           }
         }
       }
@@ -80,9 +86,12 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       $('#chart').css('display', 'none');
       $('form').css('display', 'block');
       return;
+    } else {
+      // Add an event listener that would refresh the page on Back
+      // Needed for proper UX
+      refreshWhenBack();
     }
 
-    refreshWhenBack();
 
     attemptedTimes = [];
     attemptedStudents = [];
@@ -97,19 +106,35 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
     for (i in questionIds) {
       var q = questionStats[questionIds[i]];
 
-      attemptedTimes.push(q.totalTimesAttempted);
-      attemptedStudents.push(q.totalStudentsAttempted);
-      completed.push(q.totalStudentsCompleted);
-      failed.push(q.totalStudentsAttempted - q.totalStudentsCompleted);
-      unsuccessful.push(q.totalTimesAttempted - q.totalStudentsAttempted);
-      completedStudentsRate.push(Math.floor((q.totalStudentsCompleted / q.totalStudentsAttempted) * 100));
-      lessons.push(q.lesson_id);
-      units.push(q.unit_id);
-      types.push(q.question_type);
+      attemptedTimes.push(q.attemptedTimes);
+      attemptedStudents.push(q.attemptedStudents);
+      completed.push(q.completed);
+      failed.push(q.attemptedStudents - q.completed);
+      unsuccessful.push(q.attemptedTimes - q.attemptedStudents);
+      completedStudentsRate.push(Math.floor((q.completed / q.attemptedStudents) * 100));
+      lessons.push(q.lessonId);
+      units.push(q.unitId);
+      types.push(q.questionType);
     }
 
+    function getLessonTitle(i) {
+      if (syllabus[units[i]] && syllabus[units[i]].lessons) {
+        return syllabus[units[i]].lessons[lessons[i]];
+      }
+      return i;
+    }
 
-    $.getJSON('course-data/QuestionEntity.json', function(json) {
+    function getUnitTitle(i) {
+      if (syllabus[units[i]]) {
+        return syllabus[units[i]].title;
+      }
+      return i;
+    }
+
+    // QuestionEntity contains data on all non-Quizly questions, e.g. their description,
+    // full question text, possible answers, etc. We need this so that we can
+    // replace question IDs with question description
+    $.getJSON(dataFolder + 'QuestionEntity.json', function(json) {
       questionText = {}
       for (i in json.rows) {
         var id = json.rows[i]['key.id'];
@@ -122,9 +147,11 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
 
       for (i in questionIds) {
         var id = questionIds[i];
-        // to avoid infinity:
+        // to avoid difficulty = infinity:
         var av = completed[i] == 0 ? 0 : (attemptedTimes[i] / completed[i]).toFixed(2);
         var text = questionText[questionIds[i]];
+        var lesson = getLessonTitle(i);
+        var unit = getUnitTitle(i);
 
         if (types[i] === 'Quizly') {
           if (quizly_desc[id]) {
@@ -144,8 +171,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: av,
-          lesson: syllabus[units[i]].lessons[lessons[i]],
-          unit: syllabus[units[i]].title,
+          lesson: lesson,
+          unit: unit,
           type: types[i]
         });
         data2.push({
@@ -157,8 +184,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: av,
-          lesson: syllabus[units[i]].lessons[lessons[i]],
-          unit: syllabus[units[i]].title,
+          lesson: lesson,
+          unit: unit,
           type: types[i]
         });
         data3.push({
@@ -170,8 +197,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
           attemptedStudents: attemptedStudents[i],
           completedStudentsRate: completedStudentsRate[i],
           av: av,
-          lesson: syllabus[units[i]].lessons[lessons[i]],
-          unit: syllabus[units[i]].title,
+          lesson: lesson,
+          unit: unit,
           type: types[i]
         });
       }

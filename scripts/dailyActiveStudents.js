@@ -3,7 +3,7 @@ var endDate = new Date(2017, 5, 30);
 
 function dailyActiveStudents(startDate, endDate) {
 
-  $.getJSON('course-data/EventEntity.json', function(json) {
+  $.getJSON(dataFolder + 'EventEntity.json', function(json) {
 
       var courseDurationInDays = daysBetween(startDate, endDate);
       var dailyActiveStudents = Array(courseDurationInDays).fill(0);

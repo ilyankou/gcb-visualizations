@@ -67,7 +67,7 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
           click: function() {
             var type = event.point.type;
             var id = event.point.id;
-            var url = 'https://mobilecsp-2017.appspot.com/mobilecsp/';
+            var url = 'https://' + courseDomain;
 
             if (type === 'Quizly') {
               url += 'assets/lib/quizly/gcb-index.html?backpack=hidden&selector=hidden&quizname=';
