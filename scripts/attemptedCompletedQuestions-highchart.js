@@ -1,6 +1,10 @@
 function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
 
-  Highcharts.chart('chart', {
+  var original1 = data1;
+  var original2 = data2;
+  var original3 = data3;
+
+  var chart = Highcharts.chart('chart', {
     chart: {
       type: 'column'
     },
@@ -102,6 +106,26 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
       color: 'silver'
     }]
 
+  });
+
+  $('#filterText').keyup(function() {
+    var query = $('#filterText').val();
+
+    var data1 = [];
+    var data2 = [];
+    var data3 = [];
+
+    for (i = 0; i < original1.length; i++) {
+      if (original1[i].text.toLowerCase().indexOf(query.toLowerCase()) != -1) {
+        data1.push(original1[i]);
+        data2.push(original2[i]);
+        data3.push(original3[i]);
+      }
+    }
+
+    chart.series[0].setData(data1, false);
+    chart.series[1].setData(data2, false);
+    chart.series[2].setData(data3, true);
   });
 
 }

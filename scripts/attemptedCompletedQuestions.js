@@ -84,6 +84,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
     if (questionIds.length == 0) {
       alert('Nothing to display!');
       $('#chart').css('display', 'none');
+      $('#filter').css('display', 'none');
       $('form').css('display', 'block');
       return;
     } else {

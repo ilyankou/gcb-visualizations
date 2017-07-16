@@ -50,3 +50,29 @@ input[type="number"] {
 p {
   margin: 10px 0;
 }
+
+#filter {
+  display: none;
+  position: absolute;
+  bottom: -47px;
+  padding: 10px;
+  padding-top: 2px;
+  background: #ebebeb;
+  text-align: center;
+  width: 200px;
+  left: 50%;
+  margin-left: -100px;
+}
+
+#filter input {
+  width: 100%;
+}
+
+#filter span {
+  color: #555;
+  font-size: 0.8em;
+}
+
+#filter:hover {
+  bottom: 0;
+}

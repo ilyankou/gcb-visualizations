@@ -81,7 +81,7 @@ $(document).ready(function() {
     }
   });
 
-  $('form').submit(function() {
+  $('form').submit(function(event) {
     event.preventDefault();
 
     var chartType = $('#chart-type').val();
@@ -92,6 +92,7 @@ $(document).ready(function() {
 
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
+      $('#filter').css('display', 'block');
       attemptedCompletedQuestions(unit, lesson);
     }
     else if (chartType === 'Daily Active Students') {
