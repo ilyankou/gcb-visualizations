@@ -15,7 +15,7 @@ function drawScatter(data) {
     },
 
     subtitle: {
-      text: 'Using PCA to reduce dimentionality from 14 to 2. Radius = complexity.',
+      text: 'Using PCA to reduce dimentionality from 12 to 2. Radius = complexity.',
       style: {
         color: 'white'
       }
