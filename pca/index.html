@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Quizly Complexity Scatter Chart</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <div id="chart"></div>
+    <script src="scatter.js"></script>
+
+    <script>
+      var dataUrl = 'https://docs.google.com/spreadsheets/d/1eSxFQDg10zfk0-vFaXK4Fd2-0FbnUygD1d3mYe5DyYc/edit?usp=sharing'
+
+      Tabletop.init({
+        key: dataUrl,
+        callback: processData,
+        simpleSheet: false
+      });
+
+      function processData(data) {
+        scatter = data['Principal Component Analysis'].elements;
+
+        for (i in scatter) {
+          scatter[i].x = parseFloat(scatter[i].x);
+          scatter[i].y = parseFloat(scatter[i].y);
+          scatter[i].z = parseFloat(scatter[i].z);
+       }
+
+        drawScatter(scatter);
+      }
+
+    </script>
+  </body>
+
+</html>
