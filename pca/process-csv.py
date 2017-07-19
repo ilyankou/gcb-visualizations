@@ -4,7 +4,7 @@ from matplotlib.mlab import PCA
 from numpy import genfromtxt
 
 
-test = genfromtxt('pca/initial-data.csv',
+test = genfromtxt('pca/2017.csv',
                     dtype=None,
                     delimiter=',',
                     skip_header=1,
