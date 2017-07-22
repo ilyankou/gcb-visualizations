@@ -15,7 +15,7 @@ function drawScatter(data) {
     },
 
     subtitle: {
-      text: 'Using PCA to reduce dimentionality from 15 to 2. Radius = complexity.',
+      text: 'Using MDS to plot Quizly problems in 2 dimensions. Radius = complexity.',
       style: {
         color: 'white'
       }

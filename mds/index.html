@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>PCA Quizly Complexity Scatter Chart</title>
+    <title>MDS Quizly Complexity Scatter Chart</title>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
       integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -29,7 +29,7 @@
       });
 
       function processData(data) {
-        scatter = data['2017 PCA'].elements;
+        scatter = data['2017 MDS'].elements;
 
         for (i in scatter) {
           scatter[i].x = parseFloat(scatter[i].x);
