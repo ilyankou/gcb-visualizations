@@ -1,16 +1,26 @@
-N,Quiz Key,Quiz Name,Complexity,total # of blocks,# of blocks given,"# of yellow blocks (event handlers, control structures)",# of purple blocks (procedures),# of orange blocks (set/get variables),# of blue (math),# of green (set/get properties),# of abstractions,# of ifs,# of if/else,loops,lists,procedures,proc. w/params,# of variables
-1,LXgF4NO50hNM,quiz_pause_the_player,1.63,2,1,1,1,0,0,0,1,0,0,0,0,0,0,0
-2,BtQ8hSoGkeml,quiz_button_click_stop_player,1.45,2,0,1,1,0,0,0,1,0,0,0,0,0,0,0
+N,Quiz Key,Quiz Name,Complexity,total,given,yellow,purple,orange,blue,green,abstractions,ifs,ifelse,loops,lists,proc,proc_params,variables
+1,LXgF4NO50hNM,quiz_pause_the_player,1.62,2,1,1,1,0,0,0,1,0,0,0,0,0,0,0
+2,BtQ8hSoGkeml,quiz_button_click_stop_player,1.44,2,0,1,1,0,0,0,1,0,0,0,0,0,0,0
 3,Dstsv7VuDQb5,quiz_stop_player_if_playing,1.88,5,3,2,2,0,0,1,2,1,1,0,0,0,0,0
 4,twxBgieSEwqs,quiz_if_else_stop_start_player,2.1,5,1,2,2,0,0,1,2,1,1,0,0,0,0,0
 5,a3uBZXYSOJee,quiz_background_color,1.35,2,1,0,0,0,0,1,1,0,0,0,0,0,0,0
-6,pnhvzarYPPW1,quiz_text_color,3.63,2,0,0,0,0,0,1,1,0,0,0,0,0,0,0
-7,G3qzTftPYKTe,quiz_incrementing,1.94,6,2,0,0,3,3,0,1,0,0,0,0,0,0,1
+6,pnhvzarYPPW1,quiz_text_color,3.69,2,0,0,0,0,0,1,1,0,0,0,0,0,0,0
+7,G3qzTftPYKTe,quiz_incrementing,1.8,6,2,0,0,3,3,0,1,0,0,0,0,0,0,1
 8,4kITN7u5hdsO,quiz_initialize_variable,1.97,2,0,0,0,1,1,0,1,0,0,0,0,0,0,1
 9,8T30OkUf5r1r,quiz_simple_if_else,2.14,16,5,1,0,6,8,0,2,1,1,0,0,0,0,2
-10,KQctST8skmaC,quiz_proc_double,3.08,7,2,0,1,3,3,0,2,0,0,0,0,1,0,1
-11,v2m4Ks25S1MX,quiz_add_globals,1.46,11,6,0,1,6,4,0,2,0,0,0,0,1,0,3
+10,KQctST8skmaC,quiz_proc_double,3.16,7,2,0,1,3,3,0,2,0,0,0,0,1,0,1
+11,v2m4Ks25S1MX,quiz_add_globals,1.49,11,6,0,1,6,4,0,2,0,0,0,0,1,0,3
 12,rCgLbJRceEbn,quiz_reset_score,1.85,5,2,0,1,2,2,0,2,0,0,0,0,1,0,1
 13,7uowepixSjT4,quiz_calculate_hit_rate,2.04,13,6,0,1,7,5,0,2,0,0,0,0,1,0,3
-14,w18q4UWKxvlM,quiz_procedure_bug,1.48,17,17,0,3,8,5,1,3,0,0,0,0,1,0,3
+14,w18q4UWKxvlM,quiz_procedure_bug,1.48,17,17,0,3,8,5,1,3,0,0,0,0,2,0,3
 15,rvjUJMaLZ56s,quiz_if_x_greater_than_y,1.24,12,4,1,0,4,3,2,2,1,1,0,0,0,0,2
+16,,quiz_loop_sum_even_numbers,6.55,16,2,2,0,5,8,0,3,1,0,1,0,0,0,1
+17,,quiz_procedure_with_parameter,2.67,7,2,0,1,4,2,0,2,0,0,0,0,1,1,2
+18,,quiz_proc_two_params,1.91,7,2,0,1,4,2,0,2,0,0,0,0,1,1,3
+19,,quiz_function_square,1.39,4,0,0,1,2,1,0,2,0,0,0,0,1,1,1
+20,,quiz_double_function,1.43,4,0,0,1,1,2,0,2,0,0,0,0,1,1,1
+21,,quiz_loop_2_to_10th_power,1.35,10,2,1,0,3,6,0,2,0,0,1,0,0,0,2
+22,,quiz_loop_sum_numbers,2.23,10,2,1,0,4,5,0,2,0,0,1,0,0,0,2
+23,,quiz_loop_stars,7,10,2,1,0,3,0,0,2,0,0,1,0,0,0,2
+24,,quiz_convert_list_to_string,11.38,11,2,1,1,6,0,0,3,0,0,1,1,1,1,3
+25,,quiz_count_nonzeros_in_list_procedure,3.1,19,6,1,1,7,8,0,5,1,0,1,1,1,0,3

@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import datasets, linear_model, metrics
 from sklearn.model_selection import train_test_split
 from collections import OrderedDict
+import random
 
 # Choose columns to be used in training and testing:
 COLUMNS = OrderedDict([
@@ -16,10 +17,10 @@ COLUMNS = OrderedDict([
     ('abstractions', 11),
     ('ifs', 12),
     ('ifelse', 13),
-    #('loops', 14),
-    #('lists', 15),
-    ('procedures', 16),
-    #('procedures_params', 17),
+    ('loops', 14),
+    ('lists', 15),
+    ('proc', 16),
+    ('proc_params', 17),
     ('variables', 18)
 ])
 
@@ -43,9 +44,10 @@ y = np.genfromtxt('./pca/2017.csv',
 
 
 # Split X and y into training and testing sets.
-# -> test_size parameter is a real value from 0 (0%) to 1 (100%):
+# -> test_size parameter is a real value from 0 (0%) to 1 (100%, no data goes to train set):
 #       Since we're using a different dataset for testing, let's do test_size = 0
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0, random_state=1)
+random.seed()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random.randint(1,100))
 
 # In case X consists of one column, turn column into row (~transpose)
 if len(COLUMNS) == 1:
@@ -68,7 +70,7 @@ i = 0
 for col in COLUMNS:
     print('{} = {:.2f}'.format(col, model.coef_[i]))
     i += 1
-print(len(model.coef_))
+
 # Variance score: 1 means perfect prediction
 print('\n\nTraining set variance score: {}'.format(model.score(X_train, y_train)))
 
@@ -76,6 +78,7 @@ print('\n\nTraining set variance score: {}'.format(model.score(X_train, y_train)
 ##### TESTING STARTS HERE #####
 
 # Since we are using a different dataset to test, let's load it:
+"""
 X_test = np.genfromtxt('./pca/ram.csv',
                     dtype=(float, int),
                     delimiter=',',
@@ -90,7 +93,7 @@ y_test = np.genfromtxt('./pca/ram.csv',
                     usecols=(3) # again, complexities are stored in the 3rd column
                 )
 
-
+"""
 print('\n\n~~~ PREDICTED , ACTUAL ~~~')
 for i in range(0, len(X_test)):
     sample = X_test[i].reshape(1, -1) # apparently (1, -1) is the size of a single sample
