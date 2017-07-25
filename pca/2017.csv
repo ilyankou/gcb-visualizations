@@ -24,3 +24,5 @@ N,Quiz Key,Quiz Name,Complexity,total,given,yellow,purple,orange,blue,green,abst
 23,,quiz_loop_stars,7,10,2,1,0,3,0,0,2,0,0,1,0,0,0,2
 24,,quiz_convert_list_to_string,11.38,11,2,1,1,6,0,0,3,0,0,1,1,1,1,3
 25,,quiz_count_nonzeros_in_list_procedure,3.1,19,6,1,1,7,8,0,5,1,0,1,1,1,0,3
+26,,quiz_hello_function,4.02,5,0,0,1,1,0,0,2,0,0,0,0,1,1,1
+27,,quiz_sum_a_list_procedure,12.15,15,6,1,1,7,5,0,3,0,0,1,1,1,0,2

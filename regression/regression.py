@@ -5,23 +5,25 @@ from sklearn.model_selection import train_test_split
 from collections import OrderedDict
 import random
 
+TEST_SIZE = 0.2   # 0.2 (20%) recommended
+
 # Choose columns to be used in training and testing:
 COLUMNS = OrderedDict([
     ('total', 4),
-    ('given', 5),
-    ('yellow', 6),
-    ('purple', 7),
-    ('orange', 8),
-    ('blue', 9),
-    ('green', 10),
+    #('given', 5),
+    #('gold', 6),
+    #('purple', 7),
+    #('orange', 8),
+    #('blue', 9),
+    #('green', 10),
     ('abstractions', 11),
-    ('ifs', 12),
-    ('ifelse', 13),
-    ('loops', 14),
-    ('lists', 15),
+    #('ifs', 12),
+    #('ifelse', 13),
+    #('loops', 14),
+    #('lists', 15),
     ('proc', 16),
-    ('proc_params', 17),
-    ('variables', 18)
+    #('proc_params', 17),
+    #('variables', 18)
 ])
 
 # Load the dataset.
@@ -47,8 +49,9 @@ y = np.genfromtxt('./pca/2017.csv',
 # -> test_size parameter is a real value from 0 (0%) to 1 (100%, no data goes to train set):
 #       Since we're using a different dataset for testing, let's do test_size = 0
 random.seed()
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random.randint(1,100))
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, random_state=random.randint(1,100))
 
+print(len(y_test))
 # In case X consists of one column, turn column into row (~transpose)
 if len(COLUMNS) == 1:
     X_train = X_train.reshape(len(X_train), 1)
@@ -67,9 +70,13 @@ model.fit(X_train, y_train)
 # Regression coefficients
 print('~~~ COEFFICIENTS ~~~')
 i = 0
+zzz=''
 for col in COLUMNS:
-    print('{} = {:.2f}'.format(col, model.coef_[i]))
+    zzz = zzz + '{:.2f}\t'.format(model.coef_[i])
+    #print('{} = {:.2f}'.format(col, model.coef_[i]))
     i += 1
+
+print(zzz)
 
 # Variance score: 1 means perfect prediction
 print('\n\nTraining set variance score: {}'.format(model.score(X_train, y_train)))
