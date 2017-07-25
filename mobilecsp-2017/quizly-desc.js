@@ -30,3 +30,33 @@ quizly_desc = {               // instance_id:description
     'CMcsWiDTnGiA':{'desc': 'Quizly, Procedure count nonzeros in a list', 'name':'quiz_count_nonzeros_in_list_procedure'}, // 8.4
     '69MfN6vXmbKL':{'desc': 'Quizly, Procedure convert list to string', 'name':'quiz_convert_list_to_string'} // 8.4
 }
+
+abstractions = {
+  'LXgF4NO50hNM': 2,
+  'BtQ8hSoGkeml': 2,
+  'Dstsv7VuDQb5': 5,
+  'twxBgieSEwqs': 5,
+  'a3uBZXYSOJee': 2,
+  'pnhvzarYPPW1': 2,
+  'G3qzTftPYKTe': 4,
+  '4kITN7u5hdsO': 2,
+  '8T30OkUf5r1r': 7,
+  'KQctST8skmaC': 5,
+  'v2m4Ks25S1MX': 5,
+  'rCgLbJRceEbn': 4,
+  '7uowepixSjT4': 5,
+  'w18q4UWKxvlM': 6,
+  'rvjUJMaLZ56s': 6,
+  '9W7S36OUhfLG': 10,
+  '9u9jlO8BVx8x': 6,
+  'N42cODoOqcPI': 6,
+  '67fSoFebJJbq': 5,
+  'ZDGEnhh0RvmS': 5,
+  'SlYSAMWRzy7u': 5,
+  'mwh8zMGfHdNr': 6,
+  '9DBHdyYShIEF': 6,
+  '69MfN6vXmbKL': 10,
+  'CMcsWiDTnGiA': 10,
+  '7S9SfFlGY3Ve': 7,
+  'Ynvr0X7g6yK4': 11
+}

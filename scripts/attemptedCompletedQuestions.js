@@ -67,7 +67,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
                 questionType: qType,
                 attemptedTimes: 0,
                 attemptedStudents: 0,
-                completed: 0
+                completed: 0,
+                custom: abstractions[qId] ? abstractions[qId] : null
               };
             }
 
@@ -103,6 +104,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
     lessons = [];
     units = [];
     types = [];
+    custom = [];
 
     for (i in questionIds) {
       var q = questionStats[questionIds[i]];
@@ -116,6 +118,7 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
       lessons.push(q.lessonId);
       units.push(q.unitId);
       types.push(q.questionType);
+      custom.push(q.custom);
     }
 
     function getLessonTitle(i) {
@@ -174,7 +177,8 @@ function attemptedCompletedQuestions(wantedUnit, wantedLesson) {
           av: av,
           lesson: lesson,
           unit: unit,
-          type: types[i]
+          type: types[i],
+          custom: custom[i]
         });
         data2.push({
           y: failed[i],

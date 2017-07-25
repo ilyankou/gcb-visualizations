@@ -56,9 +56,10 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
                     Attempted <b>{3}</b> times by <b>{4}</b> students<br> \
                     Completed by <b>{5}</b> students ({6}%)<br> \
                     Average <b>{7}</b> attempts to answer<br> \
+                    Abstractions: <b>{9}</b><br> \
                     Question ID <b>{8}</b>'.format(
                       p.text, p.lesson, p.type, p.attemptedTimes, p.attemptedStudents,
-                      p.completed, p.completedStudentsRate, p.av, p.id
+                      p.completed, p.completedStudentsRate, p.av, p.id, p.custom
                     );
         return html;
       }
@@ -86,7 +87,8 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
       column: {
         stacking: 'normal',
         dataLabels: {
-          enabled: false
+          enabled: true,
+          format: '{point.custom}'
         },
         borderWidth: 0,
       }
