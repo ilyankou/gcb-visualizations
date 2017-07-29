@@ -79,6 +79,11 @@ $(document).ready(function() {
       dailyActiveStudents(startDate, endDate);
       refreshWhenBack();
     }
+    else if (chartType === 'Gender Breakdown') {
+      $('form').css('display', 'none');
+      $('#chart').css('display', 'block');
+      genderBreakdown();
+    }
   });
 
 });
