@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 from matplotlib.mlab import PCA
 from numpy import genfromtxt
 from collections import OrderedDict
@@ -19,7 +20,8 @@ COLUMNS = OrderedDict([
     ('lists', 15),
     ('proc', 16),
     ('proc_params', 17),
-    ('variables', 18)
+    ('variables', 18),
+    ('complex', 19)
 ])
 
 data = genfromtxt('pca/2017.csv',
