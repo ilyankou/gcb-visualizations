@@ -118,7 +118,7 @@ function plotAttemptedCompletedQuestions(question_ids, data1, data2, data3) {
     var data3 = [];
 
     for (i = 0; i < original1.length; i++) {
-      if (query && original1[i] && original1.text && original1[i].text.toLowerCase().indexOf(query.toLowerCase()) != -1) {
+      if (query && original1[i] && original1[i].text && original1[i].text.toLowerCase().indexOf(query.toLowerCase()) != -1) {
         data1.push(original1[i]);
         data2.push(original2[i]);
         data3.push(original3[i]);
