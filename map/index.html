@@ -62,6 +62,13 @@
         if (states[keys[k]] > max) max = states[keys[k]];
       }
 
+      /*
+      var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+      	maxZoom: 16
+      }).addTo(map); */
+
+
       var Stamen_TonerLite = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
       	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       	subdomains: 'abcd',
@@ -76,6 +83,7 @@
       }).addTo(map); */
 
       function getColor(d) {
+        if (d == 0) return '#fff';
         if (d == 1) d = 0.99;
         var colors = ['f1eef6', 'bdc9e1', '74a9cf', '2b8cbe', '045a8d'];
         return '#' + colors[parseInt(d*5)];
