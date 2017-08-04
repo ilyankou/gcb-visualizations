@@ -26,40 +26,91 @@
 
     <script>
 
-    $.getJSON('../mobilecsp-2017/Student.json', function(json) {
-      var states = {'Unknown': 0};
+    function getField(name, fields) {
+      for (i in fields) {
+        if (fields[i][0] === name && fields[i][1]) {
+          return i;
+        }
+      }
+      return -1;
+    }
 
-      for (i in json.rows) {
-        var fields = json.rows[i].additional_fields.split('], [');
-        for (j in fields) {
-          if (fields[j].indexOf('zipcode') > -1) {
-            zipcode = fields[j].split(',')[1].split('"')[1];
-            var usState = zipToState(zipcode);
-            if (usState) {
-              if (!states[usState]) {
-                states[usState] = 0;
-              }
-              states[usState] += 1;
-            } else {
-              states.Unknown += 1;
-            }
-          }
+
+    $.getJSON('../mobilecsp-2017/Student.json', function(json) {
+      var places = {};
+
+      var addPlace = function addPlace(p) {
+        if (!places[p]) {
+          places[p] = 1;
+        } else {
+          places[p] += 1;
         }
       }
 
-      createMap(states);
+      var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+          sURLVariables = sPageURL.split('&'),
+          sParameterName,
+          i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+          sParameterName = sURLVariables[i].split('=');
+
+          if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+          }
+        }
+      };
+
+      for (i in json.rows) {
+        // Check if student was enrolled between start and end dates:
+        var startDate = new Date(getUrlParameter('start'));
+        var endDate = new Date(getUrlParameter('end'));
+        var enrolledDate = new Date(json.rows[i].enrolled_on);
+
+        if (startDate && enrolledDate < startDate) continue;
+        if (endDate && enrolledDate > endDate) continue;
+
+        var fields = JSON.parse(json.rows[i].additional_fields);
+
+        var stateIndex = getField('state', fields);
+        if (stateIndex > -1) {
+          addPlace(fields[stateIndex][1]);
+          continue;
+        }
+
+        var zipIndex = getField('zipcode', fields);
+        if (zipIndex > -1) {
+          var state = zipToState(fields[zipIndex][1]);
+          if (state) {
+            addPlace(state);
+            continue;
+          }
+        }
+
+        var countryIndex = getField('country', fields);
+        if (countryIndex > -1) {
+          addPlace(fields[countryIndex][1]);
+          continue;
+        }
+
+        // If we reached this, user did not specify their location
+        addPlace('Unknown');
+      }
+
+      createMap(places);
     });
 
-    function createMap(states) {
+    function createMap(places) {
       var map = L.map('map', {
           center: [39, -98],
           zoom: 4
       });
 
       var max = 1;
-      var keys = Object.keys(states);
+      var keys = Object.keys(places);
       for (k in keys) {
-        if (states[keys[k]] > max) max = states[keys[k]];
+        if (places[keys[k]] > max) max = places[keys[k]];
       }
 
       var base = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
@@ -78,7 +129,9 @@
       }
 
       function style(feature) {
-        var val = states[feature.properties.NAME];
+        var name = feature.properties.NAME;
+        if (!name) name = feature.properties.iso_a3;
+        var val = places[name];
         if (!val) val = 0;
         return {color: getColor(val/max), stroke: 0, fillOpacity: 0.8};
       }
@@ -91,7 +144,7 @@
           niceName = layer.feature.properties.name;
         }
 
-        var val = states[name];
+        var val = places[name];
         if (!val) val = 0;
 
         layer.bindPopup('<b>' + niceName + '</b> ' + val);
