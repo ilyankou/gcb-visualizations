@@ -18,154 +18,187 @@
       crossorigin=""></script>
 
     <script src="zip-to-state.js"></script>
+    <script src="../scripts/helpers.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 
   </head>
 
   <body>
     <div id="map"></div>
+    <table id="mytable"></table>
+    <div id="info"></div>
 
     <script>
 
-    function getField(name, fields) {
-      for (i in fields) {
-        if (fields[i][0] === name && fields[i][1]) {
-          return i;
-        }
-      }
-      return -1;
-    }
-
-
-    $.getJSON('../mobilecsp-2017/Student.json', function(json) {
+    $(document).ready(function() {
+      var codeToCountry = {};
       var places = {};
 
-      var addPlace = function addPlace(p) {
-        if (!places[p]) {
-          places[p] = 1;
-        } else {
-          places[p] += 1;
-        }
-      }
-
-      var getUrlParameter = function getUrlParameter(sParam) {
-        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-          sURLVariables = sPageURL.split('&'),
-          sParameterName,
-          i;
-
-        for (i = 0; i < sURLVariables.length; i++) {
-          sParameterName = sURLVariables[i].split('=');
-
-          if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : sParameterName[1];
+      function getField(name, fields) {
+        for (i in fields) {
+          if (fields[i][0] === name && fields[i][1]) {
+            return i;
           }
         }
-      };
+        return -1;
+      }
 
-      for (i in json.rows) {
-        // Check if student was enrolled between start and end dates:
+
+      $.getJSON('../mobilecsp-2017/Student.json', function(json) {
+
+        var addPlace = function addPlace(p) {
+          if (!places[p]) {
+            places[p] = 1;
+          } else {
+            places[p] += 1;
+          }
+        }
+
         var startDate = new Date(getUrlParameter('start'));
         var endDate = new Date(getUrlParameter('end'));
-        var enrolledDate = new Date(json.rows[i].enrolled_on);
 
-        if (startDate && enrolledDate < startDate) continue;
-        if (endDate && enrolledDate > endDate) continue;
-
-        var fields = JSON.parse(json.rows[i].additional_fields);
-
-        var stateIndex = getField('state', fields);
-        if (stateIndex > -1) {
-          addPlace(fields[stateIndex][1]);
-          continue;
+        var message = 'Showing all teachers and students enrolled.';
+        if (!isNaN(startDate.getTime()) && isNaN(endDate.getTime())) {
+          message = 'Showing teachers and students enrolled on or after ' + niceDate(startDate);
+        }
+        if (isNaN(startDate.getTime) && !isNaN(endDate.getTime())) {
+          message = 'Showing teachers and students enrolled before or on ' + niceDate(endDate);
+        }
+        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+          message = 'Showing teachers and students enrolled on or after ' + niceDate(startDate) + ' and before or on ' + niceDate(endDate);
         }
 
-        var zipIndex = getField('zipcode', fields);
-        if (zipIndex > -1) {
-          var state = zipToState(fields[zipIndex][1]);
-          if (state) {
-            addPlace(state);
+        $('#info').html(message);
+
+        for (i in json.rows) {
+          // Check if student was enrolled between start and end dates:
+          var enrolledDate = new Date(json.rows[i].enrolled_on);
+          if (!isNaN(startDate.getTime()) && enrolledDate < startDate) continue;
+          if (!isNaN(endDate.getTime()) && enrolledDate > endDate) continue;
+
+          var fields = JSON.parse(json.rows[i].additional_fields);
+
+          var stateIndex = getField('state', fields);
+          if (stateIndex > -1) {
+            addPlace(fields[stateIndex][1]);
             continue;
           }
+
+          var zipIndex = getField('zipcode', fields);
+          if (zipIndex > -1) {
+            var state = zipToState(fields[zipIndex][1]);
+            if (state) {
+              addPlace(state);
+              continue;
+            }
+          }
+
+          var countryIndex = getField('country', fields);
+          if (countryIndex > -1) {
+            addPlace(fields[countryIndex][1]);
+            continue;
+          }
+
+          // If we reached this, user did not specify their location
+          addPlace('Unknown');
         }
 
-        var countryIndex = getField('country', fields);
-        if (countryIndex > -1) {
-          addPlace(fields[countryIndex][1]);
-          continue;
+        createMap();
+      });
+
+      function createMap() {
+        var map = L.map('map', {
+            center: [39, -98],
+            zoom: 4
+        });
+
+        var max = 1;
+        var keys = Object.keys(places);
+        for (k in keys) {
+          if (places[keys[k]] > max) max = places[keys[k]];
         }
 
-        // If we reached this, user did not specify their location
-        addPlace('Unknown');
+        var base = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+        	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        	subdomains: 'abcd',
+        	minZoom: 0,
+        	maxZoom: 20,
+        	ext: 'png'
+        }).addTo(map);
+
+        function getColor(d) {
+          if (d == 0) return '#fff';
+          if (d == 1) d = 0.99;
+          var colors = ['f1eef6', 'bdc9e1', '74a9cf', '2b8cbe', '045a8d'];
+          return '#' + colors[parseInt(d*5)];
+        }
+
+        function style(feature) {
+          var name = feature.properties.NAME;
+          if (!name) name = feature.properties.iso_a3;
+          var val = places[name];
+          if (!val) val = 0;
+          return {color: getColor(val/max), stroke: 0, fillOpacity: 0.8};
+        }
+
+        function onEachFeature(feature, layer) {
+          var name = layer.feature.properties.NAME; // US state
+          var niceName = name;
+          if (!name) {  // country
+            name = layer.feature.properties.iso_a3;
+            niceName = layer.feature.properties.name;
+            codeToCountry[name] = niceName;
+          }
+
+          var val = places[name];
+          if (!val) val = 0;
+
+          layer.bindPopup('<b>' + niceName + '</b> ' + val);
+        }
+
+
+        $.getJSON('usa.geojson', function(data) {
+          var usMap = new L.geoJSON(data, {
+            style: style,
+            onEachFeature: onEachFeature,
+          }).addTo(map);
+        });
+
+        $.getJSON('world.geojson', function(data) {
+          var usMap = new L.geoJSON(data, {
+            style: style,
+            onEachFeature: onEachFeature,
+          }).addTo(map);
+          createTable();
+        });
       }
 
-      createMap(places);
+      function createTable() {
+        var dataset = [];
+        var keys = Object.keys(places);
+        for (i in keys) {
+          var place = keys[i];
+          if (codeToCountry[place]) place = codeToCountry[place];
+          dataset.push([place, places[keys[i]]]);
+        }
+
+        $('#mytable').DataTable({
+          paging: false,
+          info: false,
+          searching: false,
+          scrollY: '93vh',
+          order: [[1,'desc']],
+          data: dataset,
+          columns: [
+            {title: 'Place'},
+            {title: 'Users'}
+          ]
+        });
+      }
+
     });
-
-    function createMap(places) {
-      var map = L.map('map', {
-          center: [39, -98],
-          zoom: 4
-      });
-
-      var max = 1;
-      var keys = Object.keys(places);
-      for (k in keys) {
-        if (places[keys[k]] > max) max = places[keys[k]];
-      }
-
-      var base = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
-      	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      	subdomains: 'abcd',
-      	minZoom: 0,
-      	maxZoom: 20,
-      	ext: 'png'
-      }).addTo(map);
-
-      function getColor(d) {
-        if (d == 0) return '#fff';
-        if (d == 1) d = 0.99;
-        var colors = ['f1eef6', 'bdc9e1', '74a9cf', '2b8cbe', '045a8d'];
-        return '#' + colors[parseInt(d*5)];
-      }
-
-      function style(feature) {
-        var name = feature.properties.NAME;
-        if (!name) name = feature.properties.iso_a3;
-        var val = places[name];
-        if (!val) val = 0;
-        return {color: getColor(val/max), stroke: 0, fillOpacity: 0.8};
-      }
-
-      function onEachFeature(feature, layer) {
-        var name = layer.feature.properties.NAME; // US state
-        var niceName = name;
-        if (!name) {
-          name = layer.feature.properties.iso_a3;
-          niceName = layer.feature.properties.name;
-        }
-
-        var val = places[name];
-        if (!val) val = 0;
-
-        layer.bindPopup('<b>' + niceName + '</b> ' + val);
-      }
-
-
-      $.getJSON('usa.geojson', function(data) {
-        var usMap = new L.geoJSON(data, {
-          style: style,
-          onEachFeature: onEachFeature,
-        }).addTo(map);
-      });
-
-      $.getJSON('world.geojson', function(data) {
-        var usMap = new L.geoJSON(data, {
-          style: style,
-          onEachFeature: onEachFeature,
-        }).addTo(map);
-      });
-
-    }
 
     </script>
   </body>

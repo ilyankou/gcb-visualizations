@@ -1,9 +1,47 @@
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  font-family: Arial;
 }
 
 #map {
-  width: 100vw;
+  width: 75vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+#mytable {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#mytable tr:nth-child(2n) {
+  background: #eee;
+}
+
+#mytable_wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25vw;
+  margin: 0;
+  padding: 0;
+}
+
+.dataTables_scrollBody {
+  border: 0 !important;
+}
+
+#info {
+  position: absolute;
+  top: 10px;
+  z-index: 999;
+  background: #ccc;
+  color: white;
+  padding: 8px;
+  margin-left: 10vw;
+  margin-right: 35vw;
 }
