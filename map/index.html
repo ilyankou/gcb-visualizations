@@ -36,6 +36,10 @@
       var codeToCountry = {};
       var places = {};
 
+      var usersTotal = 0;
+      var usersForeign = 0;
+      var usersUS = 0;
+
       function getField(name, fields) {
         for (i in fields) {
           if (fields[i][0] === name && fields[i][1]) {
@@ -49,6 +53,7 @@
       $.getJSON('../mobilecsp-2017/Student.json', function(json) {
 
         var addPlace = function addPlace(p) {
+          if (p == 'none') p = 'Unknown';
           if (!places[p]) {
             places[p] = 1;
           } else {
@@ -59,7 +64,7 @@
         var startDate = new Date(getUrlParameter('start'));
         var endDate = new Date(getUrlParameter('end'));
 
-        var message = 'Showing all teachers and students enrolled.';
+        var message = 'Showing all teachers and students enrolled';
         if (!isNaN(startDate.getTime()) && isNaN(endDate.getTime())) {
           message = 'Showing teachers and students enrolled on or after ' + niceDate(startDate);
         }
@@ -78,11 +83,14 @@
           if (!isNaN(startDate.getTime()) && enrolledDate < startDate) continue;
           if (!isNaN(endDate.getTime()) && enrolledDate > endDate) continue;
 
+          usersTotal++;
+
           var fields = JSON.parse(json.rows[i].additional_fields);
 
           var stateIndex = getField('state', fields);
           if (stateIndex > -1) {
             addPlace(fields[stateIndex][1]);
+            usersUS++;
             continue;
           }
 
@@ -90,6 +98,7 @@
           if (zipIndex > -1) {
             var state = zipToState(fields[zipIndex][1]);
             if (state) {
+              usersUS++;
               addPlace(state);
               continue;
             }
@@ -97,6 +106,7 @@
 
           var countryIndex = getField('country', fields);
           if (countryIndex > -1) {
+            usersForeign++;
             addPlace(fields[countryIndex][1]);
             continue;
           }
@@ -105,6 +115,7 @@
           addPlace('Unknown');
         }
 
+        $('#info').text($('#info').text() + ': ' + usersUS + ' from the US and ' + usersForeign + ' international.')
         createMap();
       });
 
@@ -181,7 +192,7 @@
         for (i in keys) {
           var place = keys[i];
           if (codeToCountry[place]) place = codeToCountry[place];
-          dataset.push([place, places[keys[i]]]);
+          dataset.push([place, places[keys[i]], ((places[keys[i]]/usersTotal)*100).toFixed(1)]);
         }
 
         $('#mytable').DataTable({
@@ -193,7 +204,8 @@
           data: dataset,
           columns: [
             {title: 'Place'},
-            {title: 'Users'}
+            {title: 'Users'},
+            {title: '%'}
           ]
         });
       }
