@@ -41,7 +41,7 @@ $(document).ready(function() {
       $('#dates').addClass('hidden');
       $('#unit-lesson-div').removeClass('hidden');
     }
-    else if ($(this).val() === 'World Map') {
+    else if ($(this).val() === 'Geographic Distribution') {
       $('#dates').removeClass('hidden');
     }
   });
@@ -87,7 +87,7 @@ $(document).ready(function() {
       $('#chart').css('display', 'block');
       genderBreakdown();
     }
-    else if (chartType === 'World Map') {
+    else if (chartType === 'Geographic Distribution') {
       var start = $('#start-date').val();
       var end = $('#end-date').val();
       window.location.href = './map/index.html?start=' + start + '&end=' + end;
