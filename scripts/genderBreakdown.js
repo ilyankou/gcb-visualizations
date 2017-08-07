@@ -1,4 +1,4 @@
-function genderBreakdown() {
+function genderBreakdown(startDate, endDate) {
 
   $.getJSON(dataFolder + 'Student.json', function(json) {
 
@@ -16,6 +16,21 @@ function genderBreakdown() {
     }
 
     for (i in json.rows) {
+      var enrolledDate = new Date(json.rows[i].enrolled_on);
+
+      if (!isNaN(startDate.getTime()) && enrolledDate < startDate) continue;
+      if (!isNaN(endDate.getTime()) && enrolledDate > endDate) continue;
+
+      var subtitle = '';
+      if (!isNaN(startDate.getTime())) {
+        subtitle += 'from ' + niceDate(startDate);
+      }
+      if (!isNaN(endDate.getTime())) {
+        subtitle += ' to ' + niceDate(endDate);
+      }
+      subtitle += '';
+      if (subtitle === '') subtitle = 'for all time';
+
       var fields = json.rows[i].additional_fields;
       var who, gen = '';
 
@@ -65,7 +80,7 @@ function genderBreakdown() {
     });
 
     refreshWhenBack();
-    plotGenderBreakdown(usertypes, genders);
+    plotGenderBreakdown(usertypes, genders, subtitle);
 
   });
 

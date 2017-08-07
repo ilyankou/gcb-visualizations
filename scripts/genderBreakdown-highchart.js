@@ -1,4 +1,4 @@
-function plotGenderBreakdown(usertypes, genders) {
+function plotGenderBreakdown(usertypes, genders, subtitle) {
 
   Highcharts.chart('chart', {
       chart: {
@@ -6,6 +6,9 @@ function plotGenderBreakdown(usertypes, genders) {
       },
       title: {
           text: 'Gender Breakdown'
+      },
+      subtitle: {
+        text: subtitle,
       },
       plotOptions: {
           pie: {
@@ -15,7 +18,6 @@ function plotGenderBreakdown(usertypes, genders) {
       },
       tooltip: {
         formatter: function() {
-          console.log(this);
           return this.key + ': ' + this.y;
         }
       },

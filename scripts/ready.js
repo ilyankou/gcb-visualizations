@@ -41,6 +41,9 @@ $(document).ready(function() {
       $('#dates').addClass('hidden');
       $('#unit-lesson-div').removeClass('hidden');
     }
+    else if ($(this).val() === 'Gender Breakdown') {
+      $('#dates').removeClass('hidden');
+    }
     else if ($(this).val() === 'Geographic Distribution') {
       $('#dates').removeClass('hidden');
     }
@@ -85,7 +88,9 @@ $(document).ready(function() {
     else if (chartType === 'Gender Breakdown') {
       $('form').css('display', 'none');
       $('#chart').css('display', 'block');
-      genderBreakdown();
+      var startDate = new Date($('#start-date').val());
+      var endDate = new Date($('#end-date').val());
+      genderBreakdown(startDate, endDate);
     }
     else if (chartType === 'Geographic Distribution') {
       var start = $('#start-date').val();
