@@ -28,7 +28,6 @@ function genderBreakdown(startDate, endDate) {
       if (!isNaN(endDate.getTime())) {
         subtitle += ' to ' + niceDate(endDate);
       }
-      subtitle += '';
       if (subtitle === '') subtitle = 'for all time';
 
       var fields = json.rows[i].additional_fields;
