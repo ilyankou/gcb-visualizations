@@ -51,8 +51,9 @@
         return -1;
       }
 
+      var dataset = getUrlParameter('data');
 
-      $.getJSON('../mobilecsp-2017/Student.json', function(json) {
+      $.getJSON('../' + dataset + '/Student.json', function(json) {
 
         var addPlace = function addPlace(p) {
           if (p == 'none') p = 'Unknown';
@@ -67,13 +68,13 @@
         var endDate = new Date(getUrlParameter('end'));
 
         var message = 'Showing all teachers and students enrolled';
-        if (!isNaN(startDate.getTime()) && isNaN(endDate.getTime())) {
+        if (isValid(startDate) && !isValid(endDate)) {
           message = 'Showing teachers and students enrolled on or after ' + niceDate(startDate);
         }
-        if (isNaN(startDate.getTime) && !isNaN(endDate.getTime())) {
+        if (!isValid(startDate) && isValid(endDate)) {
           message = 'Showing teachers and students enrolled before or on ' + niceDate(endDate);
         }
-        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        if (isValid(startDate) && isValid(endDate)) {
           message = 'Showing teachers and students enrolled on or after ' + niceDate(startDate) + ' and before or on ' + niceDate(endDate);
         }
 

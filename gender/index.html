@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Gender Breakdown</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <script src="../scripts/helpers.js"></script>
+    <link rel="stylesheet" href="../style.css">
+
+  </head>
+
+  <body>
+    <div id="chart"></div>
+
+    <script>
+      $(document).ready(function() {
+        startDate = new Date(getUrlParameter('start'));
+        endDate = new Date(getUrlParameter('end'));
+        dataset = getUrlParameter('data');
+
+        $.getJSON('../' + dataset + '/Student.json', function(json) {
+
+          var gender = {
+            Students: {
+              Male: 0,
+              Female: 0,
+              Other: 0
+            },
+            Teachers: {
+              Male: 0,
+              Female: 0,
+              Other: 0
+            }
+          }
+
+          for (i in json.rows) {
+            var enrolledDate = new Date(json.rows[i].enrolled_on);
+
+            if (isValid(startDate) && enrolledDate < startDate) continue;
+            if (isValid(endDate) && enrolledDate > endDate) continue;
+
+            var subtitle = '';
+            if (isValid(startDate)) {
+              subtitle += 'from ' + niceDate(startDate);
+            }
+            if (isValid(endDate)) {
+              subtitle += ' to ' + niceDate(endDate);
+            }
+            if (subtitle === '') subtitle = 'for all time';
+
+            var fields = json.rows[i].additional_fields;
+            var who, gen = '';
+
+            if (fields.indexOf('"usertype", "teacher"') > -1) {
+              who = 'Teachers';
+            } else if (fields.indexOf('"usertype", "student"')) {
+              who = 'Students';
+            }
+
+            if (fields.indexOf('"gender", "male"') > -1) {
+              gen = 'Male';
+            } else if (fields.indexOf('"gender", "female"') > -1) {
+              gen = 'Female';
+            } else {
+              gen = 'Other';
+            }
+
+            if (gender[who]) {
+              gender[who][gen] += 1;
+            }
+          }
+
+          var usertypes = [];
+          ['Teachers', 'Students'].map(function(u) {
+            usertypes.push({name: u, y: gender[u]['Male'] + gender[u]['Female'] + gender[u]['Other']});
+          });
+
+          usertypes[0].color = '#EE7600';   // Teachers color
+          usertypes[1].color = 'orange';  // Students color
+
+          function getPerc(u) {
+            var i = (u == 'Teachers') ? 0 : 1;
+            var total = usertypes[0].y + usertypes[1].y;
+            return usertypes[i].y / total;
+          }
+
+          var genders = [];
+          ['Teachers', 'Students'].map(function(u) {
+            ['Male', 'Female', 'Other'].map(function(g) {
+              genders.push({
+                name: g,
+                y: gender[u][g],
+                color: g == 'Male' ? 'deepskyblue' : (g == 'Female' ? 'pink' : '#eee'),
+                perc: getPerc(u)
+              });
+            })
+          });
+
+          Highcharts.chart('chart', {
+              chart: {
+                  type: 'pie'
+              },
+              title: {
+                  text: 'Gender Breakdown'
+              },
+              subtitle: {
+                text: subtitle,
+              },
+              plotOptions: {
+                  pie: {
+                      shadow: false,
+                      center: ['50%', '50%']
+                  }
+              },
+              tooltip: {
+                formatter: function() {
+                  return this.key + ': ' + this.y;
+                }
+              },
+              series: [{
+                name: 'Users',
+                data: usertypes,
+                size: '60%',
+                dataLabels: {
+                  color: '#ffffff',
+                  distance: -30
+                }
+              }, {
+                name: 'Gender',
+                data: genders,
+                size: '80%',
+                innerSize: '60%',
+
+                dataLabels: {
+                  formatter: function () {
+                    return '<b>' + this.point.name + ':</b> ' +
+                      (this.point.percentage / this.point.perc).toFixed(1) + '%';
+                  }
+                }
+            }]
+          });
+
+        });
+
+      });
+
+    </script>
+  </body>
+
+</html>

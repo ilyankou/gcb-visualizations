@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Daily Active Students</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    <script src="../scripts/helpers.js"></script>
+    <link rel="stylesheet" href="../style.css">
+  </head>
+
+  <body>
+    <div id="chart"></div>
+
+    <script>
+      $(document).ready(function() {
+        var dataset = getUrlParameter('data');
+        var startDate = new Date(getUrlParameter('start'));
+        var endDate = new Date(getUrlParameter('end'));
+
+        if (!isValid(startDate)) {
+          startDate = new Date('2017');
+        }
+
+        if (!isValid(endDate)) {
+          endDate = new Date('2018');
+        }
+
+        $.getJSON('../' + dataset + '/EventEntity.json', function(json) {
+          var courseDurationInDays = daysBetween(startDate, endDate);
+          var dailyActiveStudents = Array(courseDurationInDays).fill(0);
+
+          for (i in json.rows) {
+            var userId = json.rows[i].user_id;
+            var eventDate = new Date(json.rows[i].recorded_on);
+            var d = daysBetween(startDate, eventDate) - 1;
+
+            if (d < 0 || d > courseDurationInDays) continue;
+
+            if (!dailyActiveStudents[d]) {
+              dailyActiveStudents[d] = {};
+            }
+
+            if (!dailyActiveStudents[d][userId]) {
+              dailyActiveStudents[d][userId] = 1;
+            } else {
+              dailyActiveStudents[d][userId] += 1;
+            }
+          }
+
+          var data = dailyActiveStudents.map(function(o) { return Object.keys(o).length });
+
+          // Draw chart
+          Highcharts.chart('chart', {
+            title: {
+              text: 'Daily Active Students'
+            },
+
+            xAxis: {
+              allowDecimals: false,
+              labels: {
+                formatter: function() {
+                  return moment(startDate).add(this.value, 'days').format('MMM Do');
+                }
+              }
+            },
+
+            yAxis: {
+              title: {
+                text: 'Number of Active Students'
+              },
+              allowDecimals: false,
+            },
+
+            tooltip: {
+              formatter: function() {
+                var date = moment(startDate).add(this.x, 'days').format('dddd, MMMM Do, YYYY');
+                var val = (this.y < 1 ? 'No' : this.y) + ' active student' + (this.y == 1 ? '' : 's');
+                return date + '<br>' + val;
+              }
+            },
+
+            legend: {
+              enabled: false,
+            },
+
+            plotOptions: {
+              series: {
+                pointStart: 0
+              }
+            },
+
+            series: [
+              {
+                name: 'Active Students',
+                data: data
+              }
+            ]
+
+          });
+
+        });
+
+      });
+    </script>
+  </body>
+
+</html>

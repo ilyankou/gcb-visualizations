@@ -1,16 +1,4 @@
 /**
- * Custom handling of 'go back' in the browser. Since the input form and
- * the charts are in displayed on the same page, imitates two different pages
- * by reloading the page when users click 'Back'.
- */
-function refreshWhenBack() {
-  window.location += '#';
-  window.onpopstate = function() {
-    location.reload();
-  }
-}
-
-/**
  * Calculates the number of days between start and end dates
  */
 function daysBetween(start, end) {
@@ -40,4 +28,24 @@ function getUrlParameter(sParam) {
       return sParameterName[1] === undefined ? true : sParameterName[1];
     }
   }
+}
+
+/**
+ * Returns true if d is a valid date
+ */
+function isValid(d) {
+  return !isNaN(d.getTime());
+}
+
+/**
+ * Define custom String.format()
+ */
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/{(\d+)}/g, function(match, number) {
+    return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+    ;
+  });
 };

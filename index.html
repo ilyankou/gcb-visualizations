@@ -11,9 +11,8 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
-    <script src="scripts/string.js"></script>
     <script src="scripts/helpers.js"></script>
-    <script src="scripts/ready.js"></script>
+    <script src="mobilecsp-2017/syllabus.js"></script>
 
 <!--
     <script>
@@ -25,7 +24,7 @@
     <script src="ram8647/quizly-desc.js"></script>
 -->
 
-
+<!--
     <script>
       var dataFolder = 'mobilecsp-2017/';
       var courseDomain = 'mobilecsp-2017.appspot.com/mobilecsp/';
@@ -33,14 +32,7 @@
 
     <script src="mobilecsp-2017/syllabus.js"></script>
     <script src="mobilecsp-2017/quizly-desc.js"></script>
-
-
-    <script src="scripts/dailyActiveStudents-highchart.js"></script>
-    <script src="scripts/dailyActiveStudents.js"></script>
-    <script src="scripts/attemptedCompletedQuestions-highchart.js"></script>
-    <script src="scripts/attemptedCompletedQuestions.js"></script>
-    <script src="scripts/genderBreakdown-highchart.js"></script>
-    <script src="scripts/genderBreakdown.js"></script>
+-->
 
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
@@ -52,13 +44,20 @@
 
     <form class="pure-form">
       <fieldset>
+        Dataset:
+        <input id="data1" type="radio" name="dataset" value="mobilecsp-2017" checked>
+        <label for="data1">mobilecsp-2017</label>
+
+        <input id="data2" type="radio" name="dataset" value="ram8647">
+        <label for="data2">ram8647</label>
+        <br><br>
 
         <label for="chart-type">Show </label>
         <select id="chart-type">
-          <option>Daily Active Students</option>
-          <option>Attempted and Completed Questions</option>
-          <option>Gender Breakdown</option>
-          <option>Geographic Distribution</option>
+          <option value="active">Daily Active Students</option>
+          <option value="exercises">Attempted and Completed Questions</option>
+          <option value="gender">Gender Breakdown</option>
+          <option value="map">Geographic Distribution</option>
         </select>
 
         <div id="additional-fields">
@@ -102,6 +101,127 @@
       </fieldset>
     </form>
 
+
+    <script>
+    $(document).ready(function() {
+
+      $('input[name=dataset]').change(function() {
+        $('#chart-type option').removeAttr('disabled');
+
+        hideChartTypes = {
+          'mobilecsp-2017': [],
+          'ram8647': ['active', 'gender', 'map']
+        };
+
+        var dataset = $(this).val();
+
+        for (i in hideChartTypes[dataset]) {
+          $('#chart-type option[value="' + hideChartTypes[dataset][i] + '"]').attr('disabled', 'disabled');
+        }
+      });
+
+      // Get Unit IDs from syllabus object, sorted
+      var unitIds = Object.keys(syllabus).sort(
+        function(a, b) {
+          return parseInt(syllabus[a]['title'].split(' ')[1]) > parseInt(syllabus[b]['title'].split(' ')[1]) ? 1 : -1;
+      });
+
+      // Generate Unit names in the dropdown menu for Attempted and Completed Questions chart
+      unitIds.forEach(function(unit) {
+        $('#unit-id').append('<option value={0}>{1}</option>'.format(unit, syllabus[unit].title));
+      });
+
+      $('#unit-id').change(function() {
+        $('#lesson-id option:not([value="-1"])').each(function() {
+          $(this).remove();
+        });
+
+        var unitId = $(this).val();
+        if (unitId != '-1') {
+          var lessonIds = Object.keys(syllabus[unitId]['lessons']).sort(
+            function(a, b) {
+              // Sort object keys by Lesson title's number
+              return parseInt(syllabus[unitId]['lessons'][a].split(' ')[0].split('.')[1]) > parseInt(syllabus[unitId]['lessons'][b].split(' ')[0].split('.')[1]) ? 1 : -1;
+            }
+          );
+
+          lessonIds.forEach(function(lesson) {
+            $('#lesson-id').append('<option value={0}>{1}</option>'.format(lesson, syllabus[unitId]['lessons'][lesson]));
+          });
+        }
+      });
+
+      // Display appropriate additional fields when user selects chart type
+      // from dropdown menu
+      $('#chart-type').change(function() {
+        $('#additional-fields div').addClass('hidden');
+
+        var additionalFields = {
+          'active': ['#dates'],
+          'exercises': ['#unit-lesson-div'],
+          'gender': ['#dates'],
+          'map': ['#dates']
+        };
+
+        var fields = additionalFields[$(this).val()];
+        for (i in fields) {
+          $(fields[i]).removeClass('hidden');
+        }
+
+      });
+
+      // When main form is submitted, do some basic error handling,
+      // hide the form, display chart's <div> and call appropriate function
+      // to start data processing
+      $('form').submit(function(event) {
+        event.preventDefault();
+
+        var params = {
+          data: $('input[name=dataset]:checked').val(),
+          start: $('#start-date').val(),
+          end: $('#end-date').val()
+        }
+
+        var chartTypes = {
+          'exercises': function() {
+            var paramsExtra = Object.assign(params, {
+              unit: parseInt($('#unit-id').val()),
+              lesson: parseInt($('#lesson-id').val()),
+              mc: document.getElementById('show-mc').checked,
+              sa: document.getElementById('show-sa').checked,
+              quizly: document.getElementById('show-quizly').checked,
+              sort: document.getElementById('sort-by-difficulty').checked
+            });
+
+            window.location.href = 'exercises/index.html?' + $.param(paramsExtra);
+          },
+
+          'active': function() {
+            window.location.href = 'active/index.html?' + $.param(params);
+          },
+
+          'gender': function() {
+            window.location.href = 'gender/index.html?' + $.param(params);
+          },
+
+          'map': function() {
+            window.location.href = 'map/index.html?' + $.param(params);
+          }
+        };
+
+        var chart = $('#chart-type').val();
+        if (chartTypes[chart]) {
+          chartTypes[chart]();
+        } else {
+          alert('Please, select a different type of visualization under "Show" menu!');
+        }
+
+      });
+
+    });
+    </script>
+
+<!--
     <div id="chart"></div>
 
     <div id="filter" class="pure-form">
@@ -109,6 +229,7 @@
       <br>
       <input type="text" id="filterText">
     </div>
+-->
 
   </body>
 </html>
